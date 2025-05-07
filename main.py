@@ -1,4 +1,3 @@
-
 import discord
 from discord.ext import commands, tasks
 import random
@@ -8,7 +7,6 @@ import os
 import json
 from dotenv import load_dotenv
 
-# Charger les variables d'environnement
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
@@ -20,7 +18,6 @@ ROLE_CHAMPION = "Champion BLD"
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-# -------- QUESTIONS --------
 quiz_questions = [
     {"question": "Quel est le plus grand océan du monde ?", "choices": ["A. Océan Atlantique", "B. Océan Indien", "C. Océan Pacifique", "D. Océan Arctique"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
     {"question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "C", "difficulty": "Facile", "category": "Science"},
@@ -31,12 +28,12 @@ current_question = {}
 scoreboard = {}
 question_task = None
 start_time = 0
+cooldown_end_time = 0
 
 felicitations = ["🎉 Bravo, tu déchires !", "✨ Excellente réponse !", "🧠 Ton cerveau est en feu !", "🔥 Impressionnant ! Continue comme ça !", "🏅 Tu viens de gagner un point bien mérité !"]
 
 SCORE_FILE = "scores.json"
 
-# -------- Sauvegarde & Chargement --------
 def sauvegarder_scores():
     with open(SCORE_FILE, "w") as f:
         json.dump(scoreboard, f)
@@ -55,10 +52,17 @@ async def on_ready():
 
 @bot.command()
 async def quiz(ctx, niveau: str = None, categorie: str = None):
-    global current_question, question_task, start_time
+    global current_question, question_task, start_time, cooldown_end_time
+
+    if time.time() < cooldown_end_time:
+        temps_restant = int(cooldown_end_time - time.time())
+        await ctx.send(f"🕒 Merci de patienter {temps_restant} secondes avant de lancer un nouveau quiz.")
+        return
+
     if current_question:
         await ctx.send("❗ Une question est déjà en cours. Réponds d'abord !")
         return
+
     questions_filtrees = quiz_questions
     if niveau:
         questions_filtrees = [q for q in questions_filtrees if q['difficulty'].lower() == niveau.lower()]
@@ -67,6 +71,7 @@ async def quiz(ctx, niveau: str = None, categorie: str = None):
     if not questions_filtrees:
         await ctx.send("❗ Aucune question trouvée avec ces critères.")
         return
+
     question = random.choice(questions_filtrees)
     current_question = {"data": question, "channel": ctx.channel, "author": ctx.author}
     embed = discord.Embed(title="🧠 Quiz Time !", description=f"**{question['question']}**", color=COLOR)
@@ -75,10 +80,16 @@ async def quiz(ctx, niveau: str = None, categorie: str = None):
     embed.add_field(name="Difficulté", value=question['difficulty'], inline=True)
     embed.add_field(name="Catégorie", value=question['category'], inline=True)
     embed.set_author(name="BLD")
-    embed.set_footer(text="create by Ghqst 🧠")
-    await ctx.send(embed=embed)
+    embed.set_footer(text=f"create by Ghqst 🧠 | ⏳ Temps restant : {TIME_LIMIT} secondes")
+    message = await ctx.send(embed=embed)
+
+    # Ajoute une réaction ⏳ pour signaler que la question est en cours
+    await message.add_reaction("⏳")
+
     question_task = asyncio.create_task(timeout_question(ctx))
     start_time = time.time()
+
+    cooldown_end_time = time.time() + 10
 
 async def timeout_question(ctx):
     global current_question
@@ -93,6 +104,7 @@ async def reponse(ctx, choix: str):
     if not current_question:
         await ctx.send("❗ Aucun quiz en cours. Utilise !quiz pour commencer.")
         return
+
     choix = choix.upper()
     bonne_reponse = current_question['data']['answer']
     if choix == bonne_reponse:
@@ -105,6 +117,7 @@ async def reponse(ctx, choix: str):
         sauvegarder_scores()
     else:
         await ctx.send(f"❌ Mauvaise réponse. La bonne réponse était : {bonne_reponse}")
+
     if question_task:
         question_task.cancel()
     current_question = {}
@@ -114,6 +127,7 @@ async def classement(ctx):
     if not scoreboard:
         await ctx.send("📊 Aucun score pour le moment.")
         return
+
     sorted_scores = sorted(scoreboard.items(), key=lambda x: x[1], reverse=True)
     desc = ""
     top_user_id = None
@@ -122,8 +136,10 @@ async def classement(ctx):
         desc += f"**{idx}. {user.name}** : {score} point(s)\n"
         if idx == 1:
             top_user_id = int(user_id)
+
     embed = discord.Embed(title="🏆 Classement BLD", description=desc, color=COLOR)
     await ctx.send(embed=embed)
+
     if top_user_id:
         guild = ctx.guild
         role = discord.utils.get(guild.roles, name=ROLE_CHAMPION)
@@ -143,6 +159,12 @@ async def score(ctx):
     score = scoreboard.get(user_id, 0)
     await ctx.send(f"🏅 {ctx.author.display_name}, ton score actuel est : **{score}** point(s) !")
 
+@bot.command()
+async def stats(ctx):
+    user_id = str(ctx.author.id)
+    score = scoreboard.get(user_id, 0)
+    await ctx.send(f"📊 Statistiques de {ctx.author.display_name} :\n**Score total** : {score} point(s).\n**Réponses correctes** : {score} (bonus de vitesse inclus).\nD'autres statistiques arriveront bientôt ! 🧠")
+
 @tasks.loop(hours=168)
 async def reset_scores():
     global scoreboard
@@ -158,3 +180,4 @@ async def ping(ctx):
 
 if __name__ == "__main__":
     bot.run(TOKEN)
+
