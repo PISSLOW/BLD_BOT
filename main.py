@@ -5,6 +5,7 @@ import random
 import asyncio
 import time
 import os
+import json
 from dotenv import load_dotenv
 
 # Charger les variables d'environnement
@@ -12,13 +13,14 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 
 PREFIX = "!"
-COLOR = 0x1E90FF  # Bleu vif
-TIME_LIMIT = 30  # Temps limite en secondes pour répondre
-ROLE_CHAMPION = "Champion BLD"  # Nom du rôle spécial
+COLOR = 0x1E90FF
+TIME_LIMIT = 30
+ROLE_CHAMPION = "Champion BLD"
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
+# -------- QUESTIONS --------
 quiz_questions = [
     {"question": "Quel est le plus grand océan du monde ?", "choices": ["A. Océan Atlantique", "B. Océan Indien", "C. Océan Pacifique", "D. Océan Arctique"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
     {"question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "C", "difficulty": "Facile", "category": "Science"},
@@ -32,9 +34,23 @@ start_time = 0
 
 felicitations = ["🎉 Bravo, tu déchires !", "✨ Excellente réponse !", "🧠 Ton cerveau est en feu !", "🔥 Impressionnant ! Continue comme ça !", "🏅 Tu viens de gagner un point bien mérité !"]
 
+SCORE_FILE = "scores.json"
+
+# -------- Sauvegarde & Chargement --------
+def sauvegarder_scores():
+    with open(SCORE_FILE, "w") as f:
+        json.dump(scoreboard, f)
+
+def charger_scores():
+    global scoreboard
+    if os.path.exists(SCORE_FILE):
+        with open(SCORE_FILE, "r") as f:
+            scoreboard = json.load(f)
+
 @bot.event
 async def on_ready():
     print(f"✅ BLD est connecté en tant que {bot.user}")
+    charger_scores()
     reset_scores.start()
 
 @bot.command()
@@ -86,6 +102,7 @@ async def reponse(ctx, choix: str):
         await ctx.send(f"✅ Bonne réponse ! {felicitations_message} (Bonus de vitesse : +{bonus} point(s))")
         user_id = str(ctx.author.id)
         scoreboard[user_id] = scoreboard.get(user_id, 0) + 1 + bonus
+        sauvegarder_scores()
     else:
         await ctx.send(f"❌ Mauvaise réponse. La bonne réponse était : {bonne_reponse}")
     if question_task:
@@ -120,13 +137,20 @@ async def classement(ctx):
             await top_member.add_roles(role)
             await ctx.send(f"👑 {top_member.display_name} reçoit le rôle **{ROLE_CHAMPION}** !")
 
+@bot.command()
+async def score(ctx):
+    user_id = str(ctx.author.id)
+    score = scoreboard.get(user_id, 0)
+    await ctx.send(f"🏅 {ctx.author.display_name}, ton score actuel est : **{score}** point(s) !")
+
 @tasks.loop(hours=168)
 async def reset_scores():
     global scoreboard
     if scoreboard:
         scoreboard.clear()
+        sauvegarder_scores()
         for guild in bot.guilds:
-            await guild.system_channel.send("🔄 Les scores ont été réinitialisés pour une nouvelle semaine de compétition !")
+            await guild.system_channel.send("🔄 Les scores ont été réinitialisés pour une nouvelle semaine de compétition ! Bonne chance à tous !")
 
 @bot.command()
 async def ping(ctx):
