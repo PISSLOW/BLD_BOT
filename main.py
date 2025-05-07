@@ -172,8 +172,8 @@ async def stats(ctx):
     score = scoreboard.get(user_id, 0)
     await ctx.send(f"📊 Statistiques de {ctx.author.display_name} :\n**Score total** : {score} point(s).\n**Réponses correctes** : {score} (bonus de vitesse inclus).\nD'autres statistiques arriveront bientôt ! 🧠")
 
-@bot.command()
-async def help(ctx):
+@bot.command(name="aide")
+async def aide(ctx):
     embed = discord.Embed(title="🧠 Commandes disponibles pour BLD", color=COLOR)
     embed.add_field(name="!quiz", value="Commencer un quiz.", inline=False)
     embed.add_field(name="!reponse [choix]", value="Répondre à la question en cours.", inline=False)
