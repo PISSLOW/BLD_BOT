@@ -30,7 +30,15 @@ question_task = None
 start_time = 0
 cooldown_end_time = 0
 
-felicitations = ["🎉 Bravo, tu déchires !", "✨ Excellente réponse !", "🧠 Ton cerveau est en feu !", "🔥 Impressionnant ! Continue comme ça !", "🏅 Tu viens de gagner un point bien mérité !"]
+felicitations = [
+    "🎉 Bravo, tu déchires !", 
+    "✨ Excellente réponse !", 
+    "🧠 Ton cerveau est en feu, comme ma bite !", 
+    "🔥 Impressionnant ! Continue comme ça tu m'éxcites !", 
+    "🏅 Tu viens de gagner un point bien mérité hihi !",
+    "😂 Tu es plus rapide qu'un arabe en plein cambriolage !",
+    "👏 Ta mémoire ferait bander un éléphant !"
+]
 
 SCORE_FILE = "scores.json"
 
@@ -83,7 +91,6 @@ async def quiz(ctx, niveau: str = None, categorie: str = None):
     embed.set_footer(text=f"create by Ghqst 🧠 | ⏳ Temps restant : {TIME_LIMIT} secondes")
     message = await ctx.send(embed=embed)
 
-    # Ajoute une réaction ⏳ pour signaler que la question est en cours
     await message.add_reaction("⏳")
 
     question_task = asyncio.create_task(timeout_question(ctx))
@@ -165,6 +172,17 @@ async def stats(ctx):
     score = scoreboard.get(user_id, 0)
     await ctx.send(f"📊 Statistiques de {ctx.author.display_name} :\n**Score total** : {score} point(s).\n**Réponses correctes** : {score} (bonus de vitesse inclus).\nD'autres statistiques arriveront bientôt ! 🧠")
 
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title="🧠 Commandes disponibles pour BLD", color=COLOR)
+    embed.add_field(name="!quiz", value="Commencer un quiz.", inline=False)
+    embed.add_field(name="!reponse [choix]", value="Répondre à la question en cours.", inline=False)
+    embed.add_field(name="!classement", value="Afficher le classement actuel.", inline=False)
+    embed.add_field(name="!score", value="Afficher ton score.", inline=False)
+    embed.add_field(name="!stats", value="Afficher tes statistiques personnelles.", inline=False)
+    embed.set_footer(text="create by Ghqst 🧠")
+    await ctx.send(embed=embed)
+
 @tasks.loop(hours=168)
 async def reset_scores():
     global scoreboard
@@ -180,4 +198,5 @@ async def ping(ctx):
 
 if __name__ == "__main__":
     bot.run(TOKEN)
+
 
