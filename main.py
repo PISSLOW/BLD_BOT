@@ -18,17 +18,28 @@ ROLE_CHAMPION = "Champion BLD"
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
-quiz_questions = [
-    {"question": "Quel est le plus grand océan du monde ?", "choices": ["A. Océan Atlantique", "B. Océan Indien", "C. Océan Pacifique", "D. Océan Arctique"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
-    {"question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "C", "difficulty": "Facile", "category": "Science"},
-    {"question": "Quelle planète est connue comme la Planète Rouge ?", "choices": ["A. Mars", "B. Jupiter", "C. Vénus", "D. Saturne"], "answer": "A", "difficulty": "Facile", "category": "Astronomie"}
-]
+# Chargement des questions depuis le JSON
+with open("quiz_questions_bld.json", "r", encoding="utf-8") as f:
+    quiz_questions = json.load(f)
 
 current_question = {}
 scoreboard = {}
 question_task = None
 start_time = 0
 cooldown_end_time = 0
+
+# Statistiques avancées
+stats_file = "stats.json"
+stats_data = {}
+
+# Chargement des stats si existantes
+if os.path.exists(stats_file):
+    with open(stats_file, "r") as f:
+        stats_data = json.load(f)
+
+def save_stats():
+    with open(stats_file, "w") as f:
+        json.dump(stats_data, f)
 
 felicitations = [
     "🎉 Bravo, tu déchires !", 
@@ -114,14 +125,24 @@ async def reponse(ctx, choix: str):
 
     choix = choix.upper()
     bonne_reponse = current_question['data']['answer']
+    temps_reponse = time.time() - start_time
+    user_id = str(ctx.author.id)
+
     if choix == bonne_reponse:
-        temps_reponse = time.time() - start_time
         bonus = 2 if temps_reponse <= 5 else 1 if temps_reponse <= 10 else 0
         felicitations_message = random.choice(felicitations)
         await ctx.send(f"✅ Bonne réponse ! {felicitations_message} (Bonus de vitesse : +{bonus} point(s))")
-        user_id = str(ctx.author.id)
         scoreboard[user_id] = scoreboard.get(user_id, 0) + 1 + bonus
         sauvegarder_scores()
+
+        # Statistiques avancées
+        user_stats = stats_data.get(user_id, {"bonnes_reponses": 0, "total_questions": 0, "temps_total": 0})
+        user_stats["bonnes_reponses"] += 1
+        user_stats["total_questions"] += 1
+        user_stats["temps_total"] += temps_reponse
+        stats_data[user_id] = user_stats
+        save_stats()
+
     else:
         embed = discord.Embed(
             title="❌ Mauvaise réponse !",
@@ -131,9 +152,69 @@ async def reponse(ctx, choix: str):
         embed.set_footer(text="BLD Quiz - created by Ghqst 🧠")
         await ctx.send(embed=embed)
 
+        # Statistiques même en cas de mauvaise réponse
+        user_stats = stats_data.get(user_id, {"bonnes_reponses": 0, "total_questions": 0, "temps_total": 0})
+        user_stats["total_questions"] += 1
+        user_stats["temps_total"] += temps_reponse
+        stats_data[user_id] = user_stats
+        save_stats()
+
     if question_task:
         question_task.cancel()
     current_question = {}
+
+@bot.command()
+async def stats(ctx):
+    user_id = str(ctx.author.id)
+    user_stats = stats_data.get(user_id, {"bonnes_reponses": 0, "total_questions": 0, "temps_total": 0})
+    score = scoreboard.get(user_id, 0)
+    total = user_stats["total_questions"]
+    bonnes = user_stats["bonnes_reponses"]
+    taux = round((bonnes / total * 100), 2) if total > 0 else 0
+    temps_moyen = round((user_stats["temps_total"] / total), 2) if total > 0 else 0
+
+    await ctx.send(
+        f"📊 Statistiques de {ctx.author.display_name} :\n"
+        f"**Score total** : {score} point(s).\n"
+        f"**Réponses correctes** : {bonnes} sur {total} ({taux} %).\n"
+        f"**Temps moyen de réponse** : {temps_moyen} secondes. 🧠"
+    )
+
+@bot.command()
+async def defier(ctx, adversaire: discord.Member):
+    question = random.choice(quiz_questions)
+    duel_channel = ctx.channel
+    duel_data = {
+        "question": question,
+        "joueurs": [ctx.author.id, adversaire.id],
+        "start_time": time.time()
+    }
+
+    embed = discord.Embed(
+        title="⚔️ Duel Quiz !",
+        description=f"{ctx.author.display_name} défie {adversaire.display_name} !\n\n**{question['question']}**",
+        color=discord.Color.purple()
+    )
+    for choice in question['choices']:
+        embed.add_field(name="", value=choice, inline=False)
+    embed.set_footer(text="Le premier à répondre correctement gagne 3 points !")
+    await duel_channel.send(embed=embed)
+
+    def check(m):
+        return m.channel == duel_channel and m.author.id in duel_data["joueurs"]
+
+    try:
+        reponse_msg = await bot.wait_for("message", check=check, timeout=30)
+        if reponse_msg.content.upper() == question['answer']:
+            gagnant = reponse_msg.author
+            await duel_channel.send(f"🏆 {gagnant.display_name} remporte le duel et gagne 3 points !")
+            user_id = str(gagnant.id)
+            scoreboard[user_id] = scoreboard.get(user_id, 0) + 3
+            sauvegarder_scores()
+        else:
+            await duel_channel.send("❌ Mauvaise réponse. Duel terminé sans vainqueur.")
+    except asyncio.TimeoutError:
+        await duel_channel.send("⏰ Temps écoulé ! Aucun gagnant pour ce duel.")
 
 @bot.command()
 async def classement(ctx):
@@ -172,12 +253,6 @@ async def score(ctx):
     score = scoreboard.get(user_id, 0)
     await ctx.send(f"🏅 {ctx.author.display_name}, ton score actuel est : **{score}** point(s) !")
 
-@bot.command()
-async def stats(ctx):
-    user_id = str(ctx.author.id)
-    score = scoreboard.get(user_id, 0)
-    await ctx.send(f"📊 Statistiques de {ctx.author.display_name} :\n**Score total** : {score} point(s).\n**Réponses correctes** : {score} (bonus de vitesse inclus).\nD'autres statistiques arriveront bientôt ! 🧠")
-
 @bot.command(name="aide")
 async def aide(ctx):
     embed = discord.Embed(title="🧠 Commandes disponibles pour BLD", color=COLOR)
@@ -186,6 +261,7 @@ async def aide(ctx):
     embed.add_field(name="!classement", value="Afficher le classement actuel.", inline=False)
     embed.add_field(name="!score", value="Afficher ton score.", inline=False)
     embed.add_field(name="!stats", value="Afficher tes statistiques personnelles.", inline=False)
+    embed.add_field(name="!defier @pseudo", value="Défier un autre joueur en duel !", inline=False)
     embed.set_footer(text="create by Ghqst 🧠")
     await ctx.send(embed=embed)
 
@@ -204,6 +280,5 @@ async def ping(ctx):
 
 if __name__ == "__main__":
     bot.run(TOKEN)
-
 
 
