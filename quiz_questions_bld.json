@@ -1,38 +1,36 @@
+
 [
-    {
-        "question": "Quel est le plus grand océan du monde ?",
-        "choices": [
-            "A. Océan Atlantique",
-            "B. Océan Indien",
-            "C. Océan Pacifique",
-            "D. Océan Arctique"
-        ],
-        "answer": "C",
-        "difficulty": "Facile",
-        "category": "Géographie"
-    },
-    {
-        "question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?",
-        "choices": [
-            "A. 5",
-            "B. 6",
-            "C. 7",
-            "D. 8"
-        ],
-        "answer": "C",
-        "difficulty": "Facile",
-        "category": "Science"
-    },
-    {
-        "question": "Quelle planète est connue comme la Planète Rouge ?",
-        "choices": [
-            "A. Mars",
-            "B. Jupiter",
-            "C. Vénus",
-            "D. Saturne"
-        ],
-        "answer": "A",
-        "difficulty": "Facile",
-        "category": "Astronomie"
-    }
+    {"question": "Quel est le plus grand océan du monde ?", "choices": ["A. Océan Atlantique", "B. Océan Indien", "C. Océan Pacifique", "D. Océan Arctique"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
+    {"question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "C", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quelle planète est connue comme la Planète Rouge ?", "choices": ["A. Mars", "B. Jupiter", "C. Vénus", "D. Saturne"], "answer": "A", "difficulty": "Facile", "category": "Astronomie"},
+    {"question": "Quel est le plus long fleuve du monde ?", "choices": ["A. Amazone", "B. Nil", "C. Yangzi Jiang", "D. Mississippi"], "answer": "A", "difficulty": "Moyen", "category": "Géographie"},
+    {"question": "Qui a peint La Joconde ?", "choices": ["A. Léonard de Vinci", "B. Picasso", "C. Michel-Ange", "D. Van Gogh"], "answer": "A", "difficulty": "Facile", "category": "Art"},
+    {"question": "En quelle année l'homme a-t-il marché sur la lune ?", "choices": ["A. 1965", "B. 1969", "C. 1971", "D. 1975"], "answer": "B", "difficulty": "Moyen", "category": "Histoire"},
+    {"question": "Combien de pattes a une araignée ?", "choices": ["A. 6", "B. 8", "C. 10", "D. 12"], "answer": "B", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quelle est la capitale de l'Australie ?", "choices": ["A. Sydney", "B. Canberra", "C. Melbourne", "D. Brisbane"], "answer": "B", "difficulty": "Moyen", "category": "Géographie"},
+    {"question": "Quel métal a le symbole chimique 'Au' ?", "choices": ["A. Argent", "B. Aluminium", "C. Or", "D. Uranium"], "answer": "C", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quelle est la plus grande planète du système solaire ?", "choices": ["A. Terre", "B. Jupiter", "C. Saturne", "D. Uranus"], "answer": "B", "difficulty": "Facile", "category": "Astronomie"},
+    {"question": "Qui a écrit 'Les Misérables' ?", "choices": ["A. Victor Hugo", "B. Balzac", "C. Molière", "D. Flaubert"], "answer": "A", "difficulty": "Facile", "category": "Littérature"},
+    {"question": "Dans quel pays se trouve la Grande Muraille ?", "choices": ["A. Japon", "B. Chine", "C. Inde", "D. Corée"], "answer": "B", "difficulty": "Facile", "category": "Géographie"},
+    {"question": "Quel est l’élément chimique numéro 1 du tableau périodique ?", "choices": ["A. Oxygène", "B. Hydrogène", "C. Hélium", "D. Azote"], "answer": "B", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quel pays a remporté la Coupe du Monde 2018 ?", "choices": ["A. Allemagne", "B. Brésil", "C. France", "D. Argentine"], "answer": "C", "difficulty": "Facile", "category": "Sport"},
+    {"question": "Qui a écrit 'Harry Potter' ?", "choices": ["A. J.K. Rowling", "B. Stephen King", "C. Tolkien", "D. Suzanne Collins"], "answer": "A", "difficulty": "Facile", "category": "Littérature"},
+    {"question": "Quelle est la capitale de l'Italie ?", "choices": ["A. Milan", "B. Rome", "C. Naples", "D. Florence"], "answer": "B", "difficulty": "Facile", "category": "Géographie"},
+    {"question": "Quel est le plus grand mammifère terrestre ?", "choices": ["A. Rhinocéros", "B. Hippopotame", "C. Éléphant", "D. Girafe"], "answer": "C", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quel est le symbole chimique de l'argent ?", "choices": ["A. Ag", "B. Au", "C. Ar", "D. Al"], "answer": "A", "difficulty": "Facile", "category": "Science"},
+    {"question": "Dans quel pays se trouve la Tour Eiffel ?", "choices": ["A. Italie", "B. Allemagne", "C. France", "D. Espagne"], "answer": "C", "difficulty": "Culture"},
+    {"question": "Combien de continents existe-t-il ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
+    {"question": "Qui a inventé l'ampoule électrique ?", "choices": ["A. Thomas Edison", "B. Tesla", "C. Einstein", "D. Bell"], "answer": "A", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quelle planète est la plus proche du soleil ?", "choices": ["A. Vénus", "B. Terre", "C. Mercure", "D. Mars"], "answer": "C", "difficulty": "Facile", "category": "Astronomie"},
+    {"question": "Qui a peint la Chapelle Sixtine ?", "choices": ["A. Léonard de Vinci", "B. Michel-Ange", "C. Raphaël", "D. Botticelli"], "answer": "B", "difficulty": "Moyen", "category": "Art"},
+    {"question": "Quel est le plus grand pays du monde par superficie ?", "choices": ["A. Canada", "B. Chine", "C. Russie", "D. États-Unis"], "answer": "C", "difficulty": "Facile", "category": "Géographie"},
+    {"question": "Quel est le nombre de côtés d'un hexagone ?", "choices": ["A. 5", "B. 6", "C. 7", "D. 8"], "answer": "B", "difficulty": "Facile", "category": "Mathématiques"},
+    {"question": "Qui a découvert la gravité ?", "choices": ["A. Newton", "B. Einstein", "C. Galileo", "D. Kepler"], "answer": "A", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quelle est la monnaie officielle du Royaume-Uni ?", "choices": ["A. Euro", "B. Dollar", "C. Livre sterling", "D. Franc"], "answer": "C", "difficulty": "Facile", "category": "Économie"},
+    {"question": "Qui a écrit 'Le Cri' ?", "choices": ["A. Van Gogh", "B. Munch", "C. Monet", "D. Picasso"], "answer": "B", "difficulty": "Moyen", "category": "Art"},
+    {"question": "Quel est le plus grand satellite naturel de la Terre ?", "choices": ["A. Lune", "B. Europe", "C. Titan", "D. Ganymède"], "answer": "A", "difficulty": "Facile", "category": "Astronomie"},
+    {"question": "Qui est l'auteur de '1984' ?", "choices": ["A. Orwell", "B. Huxley", "C. Bradbury", "D. Asimov"], "answer": "A", "difficulty": "Moyen", "category": "Littérature"},
+    {"question": "Quel gaz les plantes utilisent-elles pour la photosynthèse ?", "choices": ["A. Oxygène", "B. Dioxyde de carbone", "C. Azote", "D. Hydrogène"], "answer": "B", "difficulty": "Facile", "category": "Science"},
+    {"question": "Quel sport est associé à Wimbledon ?", "choices": ["A. Football", "B. Tennis", "C. Golf", "D. Rugby"], "answer": "B", "difficulty": "Facile", "category": "Sport"},
+    {"question": "Quel est l'animal le plus rapide du monde ?", "choices": ["A. Guépard", "B. Aigle royal", "C. Gazelle", "D. Faucon pèlerin"], "answer": "D", "difficulty": "Moyen", "category": "Science"}
 ]
