@@ -1,0 +1,38 @@
+[
+    {
+        "question": "Quel est le plus grand océan du monde ?",
+        "choices": [
+            "A. Océan Atlantique",
+            "B. Océan Indien",
+            "C. Océan Pacifique",
+            "D. Océan Arctique"
+        ],
+        "answer": "C",
+        "difficulty": "Facile",
+        "category": "Géographie"
+    },
+    {
+        "question": "Combien de couleurs y a-t-il dans un arc-en-ciel ?",
+        "choices": [
+            "A. 5",
+            "B. 6",
+            "C. 7",
+            "D. 8"
+        ],
+        "answer": "C",
+        "difficulty": "Facile",
+        "category": "Science"
+    },
+    {
+        "question": "Quelle planète est connue comme la Planète Rouge ?",
+        "choices": [
+            "A. Mars",
+            "B. Jupiter",
+            "C. Vénus",
+            "D. Saturne"
+        ],
+        "answer": "A",
+        "difficulty": "Facile",
+        "category": "Astronomie"
+    }
+]
