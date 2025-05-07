@@ -123,7 +123,13 @@ async def reponse(ctx, choix: str):
         scoreboard[user_id] = scoreboard.get(user_id, 0) + 1 + bonus
         sauvegarder_scores()
     else:
-        await ctx.send(f"❌ Mauvaise réponse. La bonne réponse était : {bonne_reponse}")
+        embed = discord.Embed(
+            title="❌ Mauvaise réponse !",
+            description=f"La bonne réponse était : **{bonne_reponse}**. Courage pour la prochaine !",
+            color=0xFF0000
+        )
+        embed.set_footer(text="BLD Quiz - created by Ghqst 🧠")
+        await ctx.send(embed=embed)
 
     if question_task:
         question_task.cancel()
@@ -198,5 +204,6 @@ async def ping(ctx):
 
 if __name__ == "__main__":
     bot.run(TOKEN)
+
 
 
