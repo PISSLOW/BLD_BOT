@@ -33,11 +33,11 @@ cooldown_end_time = 0
 felicitations = [
     "🎉 Bravo, tu déchires !", 
     "✨ Excellente réponse !", 
-    "🧠 Ton cerveau est en feu, comme ma bite !", 
-    "🔥 Impressionnant ! Continue comme ça tu m'éxcites !", 
-    "🏅 Tu viens de gagner un point bien mérité hihi !",
-    "😂 Tu es plus rapide qu'un arabe en plein cambriolage !",
-    "👏 Ta mémoire ferait bander un éléphant !"
+    "🧠 Ton cerveau est en feu !", 
+    "🔥 Impressionnant ! Continue comme ça !", 
+    "🏅 Tu viens de gagner un point bien mérité !",
+    "😂 Tu es plus rapide que l'éclair !",
+    "👏 Ta mémoire ferait rougir un champion de mémoire !"
 ]
 
 SCORE_FILE = "scores.json"
